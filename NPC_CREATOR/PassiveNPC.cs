@@ -9,55 +9,43 @@ namespace NPC_CREATOR
     {
         public bool m_HasDialogue { get; set; }
 
-        public void buildDialogue()
+        public PassiveNPC()
         {
+            BuildDialogue();
+        }
 
+        public void BuildDialogue()
+        {
+            Console.WriteLine("USE DEFAULT CONSTRUCTOR? (Y/N)\n");
+            string isDefault = Console.ReadLine().ToUpper();
 
-            Console.WriteLine("Welcome to the npc creator!\n Press any key to begin.\n");
-            Console.ReadKey();
-
-            Console.WriteLine("Enter a name: ");
-            m_Name = Console.ReadLine();
-
-
-            for (int i = 0; i < 3; i++)
+            if(isDefault == "Y")
             {
-                Console.WriteLine("For size[] at element" + i);
-                m_Size[i] = (float)(Convert.ToDouble(Console.ReadLine()));
-
-            }
-
-
-            Console.WriteLine("How fast does this person go?: ");
-            m_Speed = (float)(Convert.ToDouble(Console.ReadLine()));
-
-            Console.WriteLine("True or False, Can this character talk?");
-            m_HasDialogue = Convert.ToBoolean(Console.ReadLine());
-
-            if (m_HasDialogue == true)
+                m_Name = "NpcHostile";
+                m_Size = new float[3] { 1.0f, 1.0f, 1.0f };
+                m_Speed = 0.1f;
+            } 
+            else if(isDefault == "N")
             {
-                Console.WriteLine("Good, I have a lot to say. Moving on though...");
+                Console.WriteLine("m_Name = ");
+                m_Name = Console.ReadLine();
+                for (int i = 0; i < 3; i++)
+                {
+                    Console.WriteLine("m_Size[" + i + "]");
+                    m_Size[i] = (float)(Convert.ToDouble(Console.ReadLine()));
+                }
 
-                //Console.WriteLine("Name is" + m_Name + ". \n They cannot talk. \n Size is " + m_Size[0] + " x " + m_Size[1] + " x " + m_Size[2]
-            //+ ". \n Finally, " + m_Name + "has a speed of" + m_Speed + ".");
+                Console.WriteLine("m_Speed = ");
+                m_Speed = (float)(Convert.ToDouble(Console.ReadLine()));
 
+                Console.WriteLine("m_HasDialogue = ");
+                m_HasDialogue = Convert.ToBoolean(Console.ReadLine());
             }
-
-            else if(m_HasDialogue == false)
+            else
             {
-                Console.WriteLine("That's a shame, no way to live if you ask me. Moving on though...");
-
-                //Console.WriteLine("Name is" + m_Name + ". \n They have a lot to say! \n Size is " + m_Size[0] + " x " + m_Size[1] + " x " + m_Size[2]
-          // + ". \n Finally,"+m_Name+"has a speed of" + m_Speed + ".");
+                Console.WriteLine("INVALID INPUT\n");
             }
-
-
-
-           
-
-
-
-
+            
         }
 
     }

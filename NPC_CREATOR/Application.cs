@@ -3,63 +3,84 @@ using System.Text.Json;
 using System.IO;
 using System.Collections.Generic;
 
+// COMMENT ADDED FOR GITHUB REASONS LOL
+
 namespace NPC_CREATOR
 {
     class Application
     {
-        
-        static void Main(string[] args)
+        static int Main(string[] args)
        {
-            List<NPC> NPClist;
-            string listPath = "npcList.json";
-
+            //NPCManager npcManager = NPCManager.Instance();
+            bool shouldExit = false;
+            string listPath = "NpcList.json";
+            string npcListJson;
+            List<NPC> npcList;
+            JsonSerializerOptions options = new JsonSerializerOptions { WriteIndented = true };
+            
             try
             {
                 //File.ReadAllText(listPath) != null;
-                string listData = File.ReadAllText(listPath);
+                //string listData = File.ReadAllText(listPath);
+                npcListJson = File.ReadAllText(listPath);
+                npcList = JsonSerializer.Deserialize<List<NPC>>(npcListJson);
+                NPCManager.PopulateFromList(npcList);
+                Console.WriteLine("[WELCOME TO NPC_CREATOR!]\nSuccesfully Loaded File: " + listPath + "\n");
 
-                NPClist = JsonSerializer.Deserialize<List<NPC>>(listData);
             }
             catch
             {
-                NPClist = new List<NPC>();
-                string jsonString = JsonSerializer.Serialize(NPClist);
+                Console.WriteLine("[WELCOME TO NPC_CREATOR!]\n[WARNING] : 'npcList.json' Not Found!\nStart New List? (Y/N)\n");
+                if (Console.ReadLine().ToUpper() == "Y")
+                {
+                    Console.WriteLine("Starting New List\n");
+                    npcList = new List<NPC>();
+                }
+                else
+                {
+                    Console.WriteLine("PRESS ANY KEY TO EXIT");
+                    return 0;
+                }
+                //npcListJson = JsonSerializer.Serialize(npcList);
+                //File.WriteAllText(listPath, jsonString);
+
                 //string jsonString = File.ReadAllText(listPath);
                 //NPClist = JsonSerializer.Deserialize<List<NPC>>(jsonString);
-                File.WriteAllText(listPath, jsonString);
-
+                //File.WriteAllText(listPath, jsonString);
             }
 
-            Console.WriteLine("True or False, Is this npc hostile?");
-            bool isHostile = Convert.ToBoolean(Console.ReadLine());
-            if(isHostile == false)
+            // MAIN LOOP
+            while(!shouldExit)
             {
-                Console.WriteLine("This character is not hostile!");
-                Console.ReadKey();
-
-                PassiveNPC passive = new PassiveNPC();
-
-                passive.buildDialogue();
-
+                Console.WriteLine("(1) Enter 'NEW' to add new Npc\n(2) Enter 'W' to view list contents\n(3) Enter 'CLEAR' to erase list data from file\n");
+                string inputStr = Console.ReadLine().ToUpper();
+                if (inputStr == "W")
+                {
+                    Console.WriteLine(File.ReadAllText(listPath));
+                }
+                else if (inputStr == "CLEAR")
+                {
+                    Console.WriteLine(listPath + " Contents Cleared" +
+                        "");
+                    npcListJson = JsonSerializer.Serialize(npcList, options);
+                    File.WriteAllText(listPath, npcListJson);
+                }
+                else if (inputStr == "NEW")
+                {
+                    Console.WriteLine("NPC_ENUM Options: NPC_DEFAULT, NPC_PASSIVE, NPC_HOSTILE\n Enter an NPC_ENUM");
+                    inputStr = Console.ReadLine().ToUpper();
+                    NPCManager.CreateNew(inputStr);
+                }
+      
+                Console.WriteLine("\nExit NPC_Creator? (Y/N)");
+                if (Console.ReadLine().ToUpper() == "Y")
+                    shouldExit = true;
             }
 
-            else if (isHostile == true)
-            {
-                Console.WriteLine("This character is very hostile!");
-                Console.ReadKey();
-
-                HostileNPC hostile = new HostileNPC();
-
-                hostile.buildDialogue();
-
-                //Console.WriteLine($"Name: {hostile1.m_Name}");
-                //Console.WriteLine($"Speed: {hostile1.m_Speed}");
-
-
-            }
-
-            string jsonNPCSerialize = JsonSerializer.Serialize(NPClist);
-            Console.ReadKey();
+            //SHUTDOWN
+            npcListJson = JsonSerializer.Serialize(npcList, options);
+            File.WriteAllText(listPath, npcListJson);
+            return 0;
         }
         
     }
